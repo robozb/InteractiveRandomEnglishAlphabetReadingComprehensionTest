@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Interactive random english alphabet reading comprehension test </title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <script>
+
+            let actual = null
+
+            letters = [
+                ["1a.mp3", "a"],
+                ["1b.mp3", "b"],
+                ["1c.mp3", "c"],
+                ["1d.mp3", "d"],
+                ["1e.mp3", "e"],
+                ["1f.mp3", "f"],
+                ["1g.mp3", "g"],
+                ["1h.mp3", "h"],
+                ["1i.mp3", "i"],
+                ["1j.mp3", "j"],
+                ["1k.mp3", "k"],
+                ["1l.mp3", "l"],
+                ["1m.mp3", "m"],
+                ["1n.mp3", "n"],
+                ["1o.mp3", "o"],
+                ["1p.mp3", "p"],
+                ["1q.mp3", "q"],
+                ["1r.mp3", "r"],
+                ["1s.mp3", "s"],
+                ["1t.mp3", "t"],
+                ["1u.mp3", "u"],
+                ["1v.mp3", "v"],
+                ["1w.mp3", "w"],
+                ["1x.mp3", "x"],
+                ["1y.mp3", "y"],
+                ["1z.mp3", "z"]
+            ]
+
+            function geRandomLetterPair() {
+                const random = letters[Math.floor(Math.random() * letters.length)];
+                return {soundfile: random[0], text: random[1]}
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                actual=geRandomLetterPair();
+                document.getElementById("play").addEventListener('click', e=>{play()});
+                document.getElementById("check").addEventListener('click', e=>{check()});
+                document.getElementById("showLetter").addEventListener('click', e=>{showLetter()});
+                document.getElementById("setRandomNext").addEventListener('click', e=>{setRandomNext()});
+                document.getElementById("hint").addEventListener('input', e=>{check()});
+                
+                document.addEventListener('keypress', (event) => {
+                    var source = event.target || event.srcElement;
+                    
+                    const hintEnter=source!=null && source.id=="hint" && event.keyCode==13 
+                    const hintSpacebar=source!=null && source.id=="hint" && event.keyCode==32;
+                    const any=hintEnter || hintSpacebar
+                    
+                    if (any) event.preventDefault();
+                    
+                    if(hintEnter) play();
+                    if(hintSpacebar) setRandomNext();
+                })
+            });
+            
+            function play() {
+                if(actual==null) actual=geRandomLetterPair();
+                var audio = new Audio(actual.soundfile);
+                audio.play();
+            }
+            
+            function setStatus(message) {
+                document.getElementById("status").innerHTML=message
+            }
+            
+            function setRandomNext() {
+                const hint=document.getElementById("hint").value=""
+                actual=geRandomLetterPair();
+                setStatus("")
+                play()
+            }
+             
+            function check() {
+                if(actual==null) return;
+                const hintObj=document.getElementById("hint")
+                const hint=hintObj.value
+                if(hint==null || hint.trim()=="") return;
+                if(hint.trim().toLowerCase()==actual.text.toLowerCase())
+                    setStatus("successful")
+                else {
+                    setStatus("incorrect")
+                    play();
+                }
+                hintObj.select()
+            }
+            
+            function showLetter() {
+                if(actual==null) return;
+                setStatus("Letter: "+actual.text)
+            }
+            
+        </script>
+    </head>
+    <body>
+        
+        <h1>Interactive random english alphabet reading comprehension test</h1>
+        
+        <p>shortcuts on hint: enter=play again; space=random next</p>
+        
+        <button id="play">play</button>
+        <input type="text" id="hint"/>
+        <button id="check">check</button>
+        <button id="setRandomNext">random next</button>
+        <button id="showLetter">show letter</button>
+        <p id="status"></p>
+    </body>
+</html>
